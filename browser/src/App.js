@@ -9,14 +9,18 @@ export default class Module extends React.Component {
 	}
 
 	componentDidMount() {
-		fetch('/api')
+		fetch('/api/history/Bitcoin')
 			.then(res => res.json())
-			.then(({ message }) => this.setState({ message }));
+			.then(data => this.setState({ data }));
 	}
 
 	render() {
 		return (
-			<div className="Module">{this.state.message}</div>
+			<div className="Module">
+				<pre>
+					{JSON.stringify(this.state.data)}
+				</pre>
+			</div>
 		);
 	}
 
