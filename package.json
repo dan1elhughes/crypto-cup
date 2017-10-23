@@ -1,0 +1,19 @@
+{
+  "name": "crypto-cup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "node server/server.js",
+    "heroku-postbuild": "cd browser/ && npm install --only=dev && npm install && npm run build"
+},
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
