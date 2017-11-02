@@ -1,0 +1,2 @@
+nodemon server/server.js
+cd browser; npm start
