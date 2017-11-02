@@ -5,6 +5,12 @@ import '../node_modules/react-linechart/dist/styles.css';
 
 import toHex from './util/toHex';
 
+import Leaderboard from './components/Leaderboard/Leaderboard';
+import Header from './components/Header/Header';
+
+import getHistorical from './data/getHistorical';
+import getUsers from './data/getUsers';
+
 export default class App extends React.Component {
 
 	constructor(props) {
@@ -15,25 +21,43 @@ export default class App extends React.Component {
 				{ name: '', points: [] },
 			],
 		};
+
+		this.startDate = new Date(2017, 10, 1);
+	}
+
+	hoursSince(start) {
+		const now = new Date();
+
+		let diff = (now.getTime() - start.getTime()) / 1000;
+		diff /= (60 * 60);
+		return Math.abs(Math.round(diff));
 	}
 
 	componentDidMount() {
-		fetch('/api')
-			.then(res => res.json())
-			.then(response => {
-				this.setState({ data: this.parseData(response) });
-			});
+		const limit = this.hoursSince(this.startDate);
+		getUsers()
+			.then(({ users }) => users.map(user => {
+				user.limit = limit;
+				return user;
+			}))
+			.then(users => Promise.all(users.map(getHistorical)))
+			.then(users => users.map(this.convertUserToDataset))
+			.then(data => {
+				console.log(data);
+				this.setState({ data });
+			})
 	}
 
-	parseData(data) {
-		return data.map(({ id, points }) => ({
-			name: id,
-			points: points.map(point => {
-				const [ x, y ] = point.split(',').map(_ => parseInt(_, 10));
-				return { x, y };
-			}),
-			color: toHex(id),
-		}));
+	convertUserToDataset(user) {
+		console.log(user);
+		return {
+			name: user.symbol,
+			color: toHex(user.symbol),
+			points: user.raw.map(({ time, open, close }) => ({
+				x: new Date(time*1000),
+				y: ( open + close ) / 2,
+			})),
+		};
 	}
 
 	xDisplay(x) {
@@ -49,16 +73,15 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className="App">
-				<pre>{JSON.stringify(this.state, null, 4)}</pre>
+				<Header>Crypto cup</Header>
 				<LineChart
-					width={600}
-					height={400}
 					data={this.state.data}
 					showLegends={true}
-					// isDate={true}
 					interpolate={false}
+					hidePoints={true}
 					xDisplay={this.xDisplay}
 				/>
+				<Leaderboard data={this.state.data} />
 			</div>
 		);
 	}
