@@ -1,4 +1,4 @@
-const url = 'https://gist.githubusercontent.com/dan1elhughes/41d31dc8604bb029c11552e75a902ac5/raw';
+const url = 'https://gist.githubusercontent.com/dan1elhughes/41d31dc8604bb029c11552e75a902ac5/raw/';
 
 const parse = csv => {
 	const lines = csv.split(/\r?\n/);

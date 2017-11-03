@@ -10,6 +10,7 @@ import Header from './components/Header/Header';
 
 import getHistorical from './data/getHistorical';
 import getUsers from './data/getUsers';
+import calculateGain from './data/calculateGain';
 
 export default class App extends React.Component {
 
@@ -18,11 +19,20 @@ export default class App extends React.Component {
 
 		this.state = {
 			data: [
-				{ name: '', points: [] },
+				{ name: 'Loading...', points: [] },
 			],
 		};
 
-		this.startDate = new Date(2017, 10, 1);
+		this.startDate = new Date(2017, 10, 2);
+
+		this.chart = {
+			showLegends: true,
+			interpolate: false,
+			// hidePoints: true,
+			xDisplay: this.xDisplay,
+			xLabel: 'Date',
+			yLabel: 'Value of initial stake (GBP)',
+		};
 	}
 
 	hoursSince(start) {
@@ -43,30 +53,28 @@ export default class App extends React.Component {
 			.then(users => Promise.all(users.map(getHistorical)))
 			.then(users => users.map(this.convertUserToDataset))
 			.then(data => {
-				console.log(data);
 				this.setState({ data });
-			})
+			});
 	}
 
 	convertUserToDataset(user) {
-		console.log(user);
+		const initial = user.raw[0];
 		return {
+			username: user.username,
+			picture: `https://api.skype.com/users/${user.skype}/profile/avatar`,
 			name: user.symbol,
 			color: toHex(user.symbol),
-			points: user.raw.map(({ time, open, close }) => ({
-				x: new Date(time*1000),
-				y: ( open + close ) / 2,
+			points: user.raw.map(point => ({
+				x: new Date(point.time*1000),
+				y: calculateGain({ initial, point }),
 			})),
 		};
 	}
 
 	xDisplay(x) {
-		const date = new Date(x * 1000);
-		const hours = date.getHours();
-		const minutes = '0' + date.getMinutes();
-		const seconds = '0' + date.getSeconds();
+		const d = new Date(x);
 
-		const formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+		const formattedTime = d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
 		return formattedTime;
 	}
 
@@ -76,10 +84,7 @@ export default class App extends React.Component {
 				<Header>Crypto cup</Header>
 				<LineChart
 					data={this.state.data}
-					showLegends={true}
-					interpolate={false}
-					hidePoints={true}
-					xDisplay={this.xDisplay}
+					{...this.chart}
 				/>
 				<Leaderboard data={this.state.data} />
 			</div>
