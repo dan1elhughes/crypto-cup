@@ -1,4 +1,6 @@
-const url = 'https://gist.githubusercontent.com/dan1elhughes/41d31dc8604bb029c11552e75a902ac5/raw/';
+import { users } from '../config.json';
+
+const url = users;
 
 const parse = csv => {
 	const lines = csv.split(/\r?\n/);
