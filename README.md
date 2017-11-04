@@ -21,3 +21,7 @@ username,symbol,skype
 Dan Hughes,BTC,myskypeusername
 John Smith,ETH,hisskypeusername
 ```
+
+## License
+
+[MIT](/LICENSE.md).
