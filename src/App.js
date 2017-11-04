@@ -1,10 +1,8 @@
 import React from 'react';
 
-import LineChart from 'react-linechart';
-import '../node_modules/react-linechart/dist/styles.css';
-
 import toHex from './util/toHex';
 
+import Chart from './components/Chart/Chart';
 import Leaderboard from './components/Leaderboard/Leaderboard';
 import Header from './components/Header/Header';
 
@@ -18,21 +16,10 @@ export default class App extends React.Component {
 		super(props);
 
 		this.state = {
-			data: [
-				{ name: 'Loading...', points: [] },
-			],
+			data: [],
 		};
 
-		this.startDate = new Date(2017, 9, 2);
-
-		this.chart = {
-			showLegends: true,
-			interpolate: false,
-			hidePoints: true,
-			xDisplay: this.xDisplay,
-			xLabel: 'Date',
-			yLabel: 'Value of initial stake (GBP)',
-		};
+		this.startDate = new Date(2017, 10, 2);
 	}
 
 	hoursSince(start) {
@@ -71,20 +58,12 @@ export default class App extends React.Component {
 		};
 	}
 
-	xDisplay(x) {
-		const d = new Date(x);
-
-		const formattedTime = d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
-		return formattedTime;
-	}
-
 	render() {
 		return (
 			<div className="App">
 				<Header>Crypto cup</Header>
-				<LineChart
+				<Chart
 					data={this.state.data}
-					{...this.chart}
 				/>
 				<Leaderboard data={this.state.data} />
 			</div>
