@@ -23,12 +23,12 @@ export default class App extends React.Component {
 			],
 		};
 
-		this.startDate = new Date(2017, 10, 2);
+		this.startDate = new Date(2017, 9, 2);
 
 		this.chart = {
 			showLegends: true,
 			interpolate: false,
-			// hidePoints: true,
+			hidePoints: true,
 			xDisplay: this.xDisplay,
 			xLabel: 'Date',
 			yLabel: 'Value of initial stake (GBP)',
